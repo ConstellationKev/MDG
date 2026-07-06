@@ -7,7 +7,7 @@ import os
 import serial
 import time
 
-ser = serial.Serial('COM3', 115200)
+ser = serial.Serial('/dev/cu.usbmodem101', 115200)
 time.sleep(2)
 #person is 76in out, camera is 36in tall and 90degrees
 
@@ -16,16 +16,6 @@ POSE_CONNECTIONS = [
     (11, 23), (12, 24), (23, 24), # Torso / Hips
     (23, 25), (25, 27), (24, 26), (26, 28) # Legs
 ]
-
-def calculate_angle(a, b, c):
-    a = np.array(a)
-    b = np.array(b)
-    c = np.array(c)
-    radians = np.arctan2(c[1] - b[1], c[0] - b[0]) - np.arctan2(a[1] - b[1], a[0] - b[0])
-    angle = np.abs(radians * 180.0 / np.pi)
-    if angle > 180.0:
-        angle = 360 - angle
-    return angle
 
 def draw_landmarks_on_image(rgb_image, detection_result):
     if not detection_result.pose_landmarks:
@@ -58,7 +48,7 @@ calibration_ready = False
 calibrating_step = "Noone In Frame"
 state = "standing"
 capturing = True
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 coordinates = (50, 80) 
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -110,13 +100,12 @@ while capturing:
                 calibration_ready = True
         else:
             #print the state here
-            if avg < 0.47:
+            if avg < 0.44:
                 state = "Jumping"
             elif avg < 0.6:
                 state = "Standing"
             else:
                 state = "Squatting"
-
         
         # print(f"Left Hip (ID 23) -> Y: {avg}\nState: {state}")
 
@@ -140,3 +129,4 @@ while capturing:
 
 cv2.destroyAllWindows()
 cap.release()
+ser.close()
