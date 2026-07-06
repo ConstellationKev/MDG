@@ -6,6 +6,9 @@ from mediapipe.tasks.python import vision
 import os
 import serial
 import time
+# weird solution for model transfe
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(SCRIPT_DIR, 'pose_landmarker_full.task')
 
 ser = serial.Serial('/dev/cu.usbmodem101', 115200)
 time.sleep(2)
@@ -57,7 +60,7 @@ color = (0, 255, 0)
 thickness = 3
 prevstate = state
 
-base_options = python.BaseOptions(model_asset_path='pose_landmarker_full.task')
+base_options = python.BaseOptions(model_asset_path=MODEL_PATH)
 options = vision.PoseLandmarkerOptions(
     running_mode=vision.RunningMode.IMAGE,
     base_options=base_options,
