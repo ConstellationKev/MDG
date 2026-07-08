@@ -1,5 +1,5 @@
 # Dino Jump: Mechanical Dinosaur Game
-See our demo video ![here](https://youtu.be/Z2IjySYvM9o?si=r-w-ZcUsuN7d3cY8)
+See our demo video [here](https://youtu.be/Z2IjySYvM9o?si=r-w-ZcUsuN7d3cY8)
 
 ## Zine:
 
