@@ -6,6 +6,26 @@ from mediapipe.tasks.python import vision
 import os
 import serial
 import time
+from pynput import keyboard
+
+keys_pressed = set()
+
+def on_press(key):
+    global keys_pressed
+    try:
+        # Convert character keys to lowercase strings ('w', 's')
+        keys_pressed.add(key.char.lower())
+    except AttributeError:
+        # Handle special keys if needed (e.g., keyboard.Key.space)
+        pass
+
+def on_release(key):
+    global keys_pressed
+    try:
+        keys_pressed.discard(key.char.lower())
+    except AttributeError:
+        pass
+
 # weird solution for model transfe
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(SCRIPT_DIR, 'pose_landmarker_full.task')
@@ -49,7 +69,7 @@ def draw_landmarks_on_image(rgb_image, detection_result):
 
 calibration_ready = False
 calibrating_step = "Noone In Frame"
-state = "standing"
+state = "Standing"
 capturing = True
 cap = cv2.VideoCapture(0)
 
@@ -69,6 +89,9 @@ options = vision.PoseLandmarkerOptions(
     min_tracking_confidence=0.5
 )
 detector = vision.PoseLandmarker.create_from_options(options)
+
+# listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+# listener.start()
 
 while capturing:
     ret, frame = cap.read()
@@ -112,6 +135,23 @@ while capturing:
         
         # print(f"Left Hip (ID 23) -> Y: {avg}\nState: {state}")
 
+    # if listener.running:
+    #     w_is_pressed = 'w' in keys_pressed 
+    #     s_is_pressed = 's' in keys_pressed 
+        
+    #     if state == "Standing": 
+    #         if w_is_pressed: 
+    #             state = "Jumping" 
+    #         elif s_is_pressed: 
+    #             state = "Squatting" 
+    #     elif state == "Jumping": 
+    #         if not w_is_pressed: 
+    #             state = "Standing" 
+    #     elif state == "Squatting": 
+    #         if not s_is_pressed: 
+    #             state = "Standing" 
+        
+
     if (prevstate != state):
         ser.write((state+"\n").encode('utf-8'))
         print(state)
@@ -132,4 +172,5 @@ while capturing:
 
 cv2.destroyAllWindows()
 cap.release()
+# listener.stop()
 ser.close()

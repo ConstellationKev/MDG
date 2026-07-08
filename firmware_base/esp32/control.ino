@@ -52,7 +52,7 @@ double GRAVITY = 0.005;
 double VELOCITY = 1.47;
 bool hit = false;
 
-bool flappy = true; // channge this variable someway ygs got this
+bool flappy = false; // channge this variable someway ygs got this
 
 void loop() {
     // for (int i = 0; i < 10000; i++) {
